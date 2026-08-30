@@ -12,6 +12,21 @@ import { z } from 'zod';
 // do NOT get `.nullable()` — they can be left out of a partial update, but
 // never explicitly cleared to null.
 
+// Optional DATE-column string. `<input type="date">` sends `''` when a user
+// leaves/clears a date field (see e.g. EducationSection.tsx), but Postgres
+// rejects `''` for a DATE column with `invalid input syntax for type date`.
+// Treat that empty string exactly like "not provided": leave `undefined`
+// alone (key omitted -> column untouched on update), pass an explicit
+// `null` through unchanged (column intentionally cleared), and normalize
+// `''` to `null` (column cleared). Any non-empty value is left as-is so
+// zod's own string check (and Postgres) still catch real garbage.
+// Only use this for columns that are actually `DATE` in schema.sql —
+// not for every nullable string field.
+const optionalDateString = z.preprocess(
+  (val) => (val === '' ? null : val),
+  z.string().nullable().optional()
+);
+
 // Simple resume layout customization — see Part 4 §1. Kept intentionally
 // small (3 fields, fixed option sets) rather than an open-ended style object.
 export const resumeCustomizationSchema = z.object({
@@ -37,8 +52,8 @@ export const educationSchema = z.object({
   institution_name: z.string().min(1).max(200),
   degree: z.string().max(150).nullable().optional(),
   field_of_study: z.string().max(150).nullable().optional(),
-  start_date: z.string().nullable().optional(),
-  end_date: z.string().nullable().optional(),
+  start_date: optionalDateString,
+  end_date: optionalDateString,
   gpa: z.string().max(20).nullable().optional(),
   order_index: z.number().int().optional(),
   education_level: z.enum(['primary', 'secondary', 'higher_secondary', 'degree']).nullable().optional(),
@@ -47,8 +62,8 @@ export const educationSchema = z.object({
 export const experienceSchema = z.object({
   company_name: z.string().min(1).max(150),
   job_title: z.string().min(1).max(150),
-  start_date: z.string().nullable().optional(),
-  end_date: z.string().nullable().optional(),
+  start_date: optionalDateString,
+  end_date: optionalDateString,
   is_current: z.boolean().optional(),
   description: z.string().nullable().optional(),
   order_index: z.number().int().optional(),
@@ -71,7 +86,7 @@ export const skillSchema = z.object({
 export const certificationSchema = z.object({
   certification_name: z.string().min(1).max(200),
   issuing_organization: z.string().max(200).nullable().optional(),
-  issue_date: z.string().nullable().optional(),
+  issue_date: optionalDateString,
   credential_id: z.string().max(150).nullable().optional(),
   credential_url: z.string().url().nullable().optional(),
   order_index: z.number().int().optional(),
@@ -80,6 +95,6 @@ export const certificationSchema = z.object({
 export const achievementSchema = z.object({
   title: z.string().min(1).max(200),
   description: z.string().nullable().optional(),
-  achieved_date: z.string().nullable().optional(),
+  achieved_date: optionalDateString,
   order_index: z.number().int().optional(),
 });
