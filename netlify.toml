@@ -1,0 +1,34 @@
+[build]
+  base = "."
+  command = "npm run build:client"
+  publish = "client/dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# API requests are handled by the Netlify Function wrapping the existing
+# Express app (see netlify/functions/api.ts). This MUST come before the SPA
+# fallback below, or "/*" would swallow "/api/*" requests first.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+# The existing Express app also exposes /health directly (not under /api —
+# see server/src/app.ts), so it needs its own redirect to the same
+# function, also before the SPA fallback below.
+[[redirects]]
+  from = "/health"
+  to = "/.netlify/functions/api/health"
+  status = 200
+
+# React Router SPA fallback — lets client-side routes (e.g. /dashboard,
+# /resumes/123, /admin/analytics) work on direct load/refresh.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,0 +1,166 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-ivory font-sans text-gray-900;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Miniature resume pages are measured and scaled by ResumeThumbnail.tsx.
+   Keep this wrapper free of CSS transform math so cards behave consistently
+   across browsers and at every responsive width. */
+.resume-thumb-frame {
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+}
+
+.resume-thumb-frame > .resume-thumb-page {
+  max-width: none;
+}
+
+.resume-thumb-page {
+  box-sizing: border-box;
+}
+
+/* Print / "Save as PDF" support (Part 3 §18).
+   Only the resume preview itself should print — no navbar, sidebar,
+   editor forms, buttons, or step tabs. */
+.print-only {
+  display: none;
+}
+
+@media print {
+  html,
+  body {
+    background: white;
+    margin: 0;
+    padding: 0;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  /* Let the printed resume use the full page instead of the app's padded shell. */
+  main {
+    padding: 0 !important;
+  }
+
+  /* The `.print-only` block re-renders <ResumePreview />, which wraps the
+     active template in an editor "card" (border/shadow/rounded corners/
+     padding — see ResumePreview.tsx) so it looks right on screen. None of
+     that editor chrome belongs on a printed page: strip it back to a plain
+     A4 sheet of paper so the resume isn't shrunk into a bordered box with
+     large unused margins around it (Part 3 §4/§5). */
+  .print-only,
+  .print-only * {
+    box-shadow: none !important;
+  }
+
+  .print-only > div {
+    margin: 0 !important;
+    /* Real inset for the printed page, baked into our own CSS instead of
+       relying only on `@page { margin }` below. Chrome's print dialog has
+       a "Margins" dropdown (Default/None/Minimum/Custom) that the user
+       can — and, per a bug report with screenshots, was — set to "None",
+       which overrides `@page`'s margin entirely. When that happened, every
+       template printed with zero inset (text touching the true paper
+       edge) because this was the ONLY place providing spacing and it was
+       zeroed out. Padding here is safe regardless of the browser's margin
+       setting, since it comes from the content box itself, not the page. */
+    padding: 14mm !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    /* 0 here on purpose — margin now lives on `.print-only > div`'s padding
+       above so it's consistent no matter what the browser's print-dialog
+       "Margins" dropdown is set to (Default/None/Minimum/Custom all
+       ignore/override @page's margin in one way or another). */
+    margin: 0;
+  }
+}
+
+/* Resume layout customization (Part 4 §1).
+   Applied to a `.resume-content` wrapper around the active template via
+   inline CSS custom properties (see ResumePreview.tsx). Overriding the
+   specific Tailwind utility classes the templates already use — rather
+   than editing each template file — keeps the four templates untouched
+   while still letting font size, spacing, and accent color respond
+   immediately to the customization panel. */
+.resume-content {
+  --resume-font-scale: 1;
+  --resume-spacing-scale: 1;
+  --resume-accent: #2d4f32;
+}
+
+.resume-content .text-xs { font-size: calc(0.75rem * var(--resume-font-scale)) !important; }
+.resume-content .text-sm { font-size: calc(0.875rem * var(--resume-font-scale)) !important; }
+.resume-content .text-base { font-size: calc(1rem * var(--resume-font-scale)) !important; }
+.resume-content .text-xl { font-size: calc(1.25rem * var(--resume-font-scale)) !important; }
+.resume-content .text-2xl { font-size: calc(1.5rem * var(--resume-font-scale)) !important; }
+.resume-content .text-3xl { font-size: calc(1.875rem * var(--resume-font-scale)) !important; }
+/* Arbitrary-value sizes used by MinimalTemplate/ModernTemplate (Part 4 §10 —
+   the override list above only covered standard Tailwind text-* utilities,
+   so these templates' text-[13px]/text-[11px] body copy didn't scale). */
+.resume-content .text-\[13px\] { font-size: calc(13px * var(--resume-font-scale)) !important; }
+.resume-content .text-\[11px\] { font-size: calc(11px * var(--resume-font-scale)) !important; }
+
+.resume-content .gap-0\.5 { gap: calc(0.125rem * var(--resume-spacing-scale)) !important; }
+.resume-content .gap-1 { gap: calc(0.25rem * var(--resume-spacing-scale)) !important; }
+.resume-content .gap-1\.5 { gap: calc(0.375rem * var(--resume-spacing-scale)) !important; }
+.resume-content .gap-2 { gap: calc(0.5rem * var(--resume-spacing-scale)) !important; }
+.resume-content .gap-3 { gap: calc(0.75rem * var(--resume-spacing-scale)) !important; }
+.resume-content .gap-4 { gap: calc(1rem * var(--resume-spacing-scale)) !important; }
+.resume-content .gap-5 { gap: calc(1.25rem * var(--resume-spacing-scale)) !important; }
+.resume-content .mt-1 { margin-top: calc(0.25rem * var(--resume-spacing-scale)) !important; }
+.resume-content .mt-1\.5 { margin-top: calc(0.375rem * var(--resume-spacing-scale)) !important; }
+.resume-content .mt-2 { margin-top: calc(0.5rem * var(--resume-spacing-scale)) !important; }
+.resume-content .mt-3 { margin-top: calc(0.75rem * var(--resume-spacing-scale)) !important; }
+.resume-content .mt-6 { margin-top: calc(1.5rem * var(--resume-spacing-scale)) !important; }
+.resume-content .py-0\.5 {
+  padding-top: calc(0.125rem * var(--resume-spacing-scale)) !important;
+  padding-bottom: calc(0.125rem * var(--resume-spacing-scale)) !important;
+}
+.resume-content .py-1 {
+  padding-top: calc(0.25rem * var(--resume-spacing-scale)) !important;
+  padding-bottom: calc(0.25rem * var(--resume-spacing-scale)) !important;
+}
+.resume-content .py-5 {
+  padding-top: calc(1.25rem * var(--resume-spacing-scale)) !important;
+  padding-bottom: calc(1.25rem * var(--resume-spacing-scale)) !important;
+}
+.resume-content .pb-0\.5 { padding-bottom: calc(0.125rem * var(--resume-spacing-scale)) !important; }
+.resume-content .pb-3 { padding-bottom: calc(0.75rem * var(--resume-spacing-scale)) !important; }
+
+.resume-content .text-primary-600,
+.resume-content .text-primary-700 { color: var(--resume-accent) !important; }
+.resume-content .border-primary-600 { border-color: var(--resume-accent) !important; }
+.resume-content .bg-primary-50 { background-color: color-mix(in srgb, var(--resume-accent) 10%, white) !important; }

@@ -1,0 +1,18 @@
+{
+  "name": "resume-builder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Resume Builder Web Application - COCSIT Latur BSc(CS) Project (React + TS + Tailwind + Vite / Node + Express / PostgreSQL)",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev:client": "npm run dev --workspace=client",
+    "dev:server": "npm run dev --workspace=server",
+    "build:client": "npm run build --workspace=client",
+    "build:server": "npm run build --workspace=server",
+    "start:server": "npm run start --workspace=server"
+  },
+  "license": "UNLICENSED"
+}
