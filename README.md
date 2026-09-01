@@ -2,7 +2,7 @@
 
 A full-stack, ATS-friendly resume builder built as a BSc (Computer Science) final year project at
 Royal Education Society's College of Computer Science and Information Technology, Latur
-(affiliated to SRTM University, Nanded).
+(affiliated to Swami Ramanand Teerth Marathwada University, Nanded).
 
 Guide: Mr. Tanaji Kharbad · HOD: Dr. N.S. Zulpe
 Team: Devade Pranav Balkishan (A-30) · Gavhane Srushti Sarjerao (A-38) · Dhotre Karan Kacharu (B-95)
