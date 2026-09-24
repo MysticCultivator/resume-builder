@@ -53,7 +53,7 @@ export function RegisterForm() {
       <Button
         type="submit"
         disabled={submitting}
-        className="bg-[#1e3a5f] border-[#1e3a5f] hover:bg-[#16293f] hover:border-[#16293f] active:bg-[#101c2c]"
+        className="bg-#1e3a5f border-#1e3a5f hover:bg-#16293f hover:border-#16293f active:bg-#101c2c"
         >
         {submitting ? 'Creating account…' : 'Sign up'}
      </Button>
